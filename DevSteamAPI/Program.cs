@@ -82,7 +82,8 @@ app.UseSwaggerUI();
 
 // Mapear os EndPoints padrão do Identy Framework
 app.MapGroup("/Users").MapIdentityApi<IdentityUser>();
-app.MapGroup("/Roles").MapIdentityApi<IdentityRole>();
+//app.MapGroup("/Roles").MapIdentityApi<IdentityRole>();
+
 
 app.UseHttpsRedirection();
 // Permitir a autenticação e autorização de qualquer origem
