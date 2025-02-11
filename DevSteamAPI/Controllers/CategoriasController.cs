@@ -42,6 +42,22 @@ namespace DevSteamAPI.Controllers
             return categoria;
         }
 
+        // GET: api/Categorias/nome/{nome}
+        [HttpGet("nome/{nome}")]
+        public async Task<ActionResult<IEnumerable<Categoria>>> GetCategoriasByNome(string nome)
+        {
+            var categorias = await _context.Categorias
+                .Where(c => c.CategoriaNome.Contains(nome, StringComparison.OrdinalIgnoreCase))
+                .ToListAsync();
+
+            if (categorias == null || !categorias.Any())
+            {
+                return NotFound();
+            }
+
+            return categorias;
+        }
+
         // PUT: api/Categorias/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
