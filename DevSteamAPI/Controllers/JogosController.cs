@@ -23,7 +23,6 @@ namespace DevSteamAPI.Controllers
             _context = context;
         }
 
-
         // GET: api/Jogos
         [AllowAnonymous]
         [HttpGet]
@@ -48,7 +47,6 @@ namespace DevSteamAPI.Controllers
 
         // PUT: api/Jogos/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-
         [HttpPut("{id}")]
         public async Task<IActionResult> PutJogo(Guid id, Jogo jogo)
         {
@@ -108,6 +106,22 @@ namespace DevSteamAPI.Controllers
         private bool JogoExists(Guid id)
         {
             return _context.Jogos.Any(e => e.JogoId == id);
+        }
+        // GET: api/Jogos/Nome/{nome}
+        [AllowAnonymous]
+        [HttpGet("Nome/{nome}")]
+        public async Task<ActionResult<IEnumerable<Jogo>>> GetJogosByNome(string nome)
+        {
+            var jogos = await _context.Jogos
+                .Where(j => j.JogoNome.Contains(nome, StringComparison.OrdinalIgnoreCase))
+                .ToListAsync();
+
+            if (jogos == null || !jogos.Any())
+            {
+                return NotFound();
+            }
+
+            return jogos;
         }
     }
 }
