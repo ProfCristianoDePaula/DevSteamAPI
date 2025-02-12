@@ -45,6 +45,26 @@ namespace DevSteamAPI.Controllers
             return jogo;
         }
 
+        // GET: api/Jogos/nome/{nome}
+        [AllowAnonymous]
+        [HttpGet("nome/{nome}")]
+        public async Task<ActionResult<IEnumerable<Jogo>>> GetJogosByNome(string nome, int pageNumber = 1)
+        {
+            int pageSize = 10;
+            var jogos = await _context.Jogos
+                .Where(j => j.JogoNome.Contains(nome, StringComparison.OrdinalIgnoreCase))
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            if (jogos == null || !jogos.Any())
+            {
+                return NotFound();
+            }
+
+            return jogos;
+        }
+
         // PUT: api/Jogos/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

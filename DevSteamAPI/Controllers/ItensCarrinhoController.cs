@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DevSteamAPI.Data;
-using devSteamAPI.Models;
+using DevSteamAPI.Models;
 
 namespace DevSteamAPI.Controllers
 {
@@ -78,21 +78,13 @@ namespace DevSteamAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<ItemCarrinho>> PostItemCarrinho(ItemCarrinho itemCarrinho)
         {
-            // Calcular o valor total do item
-            itemCarrinho.Total = itemCarrinho.Valor * itemCarrinho.Quantidade;
 
             // Encontrar o carrinho correspondente
             var carrinho = await _context.Carrinho.FindAsync(itemCarrinho.CarrinhoId);
             if (carrinho == null)
             {
-                return NotFound("Carrinho não encontrado.");
             }
 
-            // Adicionar o valor total do item ao valor total do carrinho
-            carrinho.Total = (carrinho.Total ?? 0) + itemCarrinho.Total;
-
-            // Adicionar o item ao contexto
-            _context.ItemCarrinho.Add(itemCarrinho);
 
             // Salvar as alterações no banco de dados
             await _context.SaveChangesAsync();
@@ -114,11 +106,8 @@ namespace DevSteamAPI.Controllers
             var carrinho = await _context.Carrinho.FindAsync(itemCarrinho.CarrinhoId);
             if (carrinho == null)
             {
-                return NotFound("Carrinho não encontrado.");
             }
 
-            // Subtrair o valor total do item do valor total do carrinho
-            carrinho.Total = (carrinho.Total ?? 0) - itemCarrinho.Total;
 
             // Remover o item do contexto
             _context.ItemCarrinho.Remove(itemCarrinho);

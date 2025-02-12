@@ -42,6 +42,54 @@ namespace DevSteamAPI.Controllers
             return carrinho;
         }
 
+        // GET: api/Carrinhos/data/{data}
+        [HttpGet("data/{data}")]
+        public async Task<ActionResult<IEnumerable<Carrinho>>> GetCarrinhosByData(DateTime data)
+        {
+            var carrinhos = await _context.Carrinho
+                .Where(c => c.DataCriacao.HasValue && c.DataCriacao.Value.Date == data.Date)
+                .ToListAsync();
+
+            if (carrinhos == null || !carrinhos.Any())
+            {
+                return NotFound();
+            }
+
+            return carrinhos;
+        }
+
+        // PUT: api/Carrinhos/finalizar/5
+        [HttpPut("finalizar/{id}")]
+        public async Task<IActionResult> FinalizarCompra(Guid id)
+        {
+            var carrinho = await _context.Carrinho.FindAsync(id);
+            if (carrinho == null)
+            {
+                return NotFound();
+            }
+
+            carrinho.Finalizado = true;
+            _context.Entry(carrinho).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!CarrinhoExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
         // PUT: api/Carrinhos/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
